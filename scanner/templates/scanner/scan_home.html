@@ -1,0 +1,20 @@
+{% extends "scanner/base.html" %}
+
+{% block title %}Scan File{% endblock %}
+
+{% block content %}
+<div class="grid lg:grid-cols-2 gap-8 items-start">
+    <div>
+        {% include "scanner/partials/upload_form.html" %}
+        {% include "scanner/partials/scan_history.html" %}
+    </div>
+
+    <div id="scan-result">
+        {% if scan_job and not result %}
+            {% include "scanner/partials/scan_job_status_card.html" %}
+        {% else %}
+            {% include "scanner/partials/result_card.html" %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

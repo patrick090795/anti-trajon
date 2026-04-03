@@ -1,0 +1,103 @@
+{% extends "scanner/base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto space-y-8">
+
+  <div>
+    <h1 class="text-3xl font-bold">Scan Dashboard</h1>
+    <p class="text-muted mt-2">
+      Overview of scan activity, risk levels, and recent detections.
+    </p>
+  </div>
+
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="panel rounded-2xl p-6">
+      <p class="text-muted text-sm">Total Scans</p>
+      <p class="text-3xl font-bold mt-2">{{ total_scans }}</p>
+    </div>
+
+    <div class="panel metric-high rounded-2xl p-6">
+      <p class="text-muted text-sm">High Risk</p>
+      <p class="text-3xl font-bold mt-2" style="color: var(--color-threat-red);">{{ high_risk }}</p>
+    </div>
+
+    <div class="panel metric-medium rounded-2xl p-6">
+      <p class="text-muted text-sm">Medium Risk</p>
+      <p class="text-3xl font-bold mt-2" style="color: var(--color-alert-amber);">{{ medium_risk }}</p>
+    </div>
+
+    <div class="panel metric-low rounded-2xl p-6">
+      <p class="text-muted text-sm">Low Risk</p>
+      <p class="text-3xl font-bold mt-2" style="color: var(--color-clean-green);">{{ low_risk }}</p>
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-6">
+    <div class="panel rounded-2xl p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-semibold">Recent Scans</h2>
+      </div>
+
+      {% if recent_results %}
+        <div class="space-y-3">
+          {% for result in recent_results %}
+            <div class="panel-subtle rounded-xl p-4">
+              <div class="flex items-center justify-between gap-4">
+                <div>
+                  <p class="font-medium break-all">{{ result.scan_file.filename }}</p>
+                  <p class="text-muted text-sm">
+                    {{ result.scanned_at|date:"M d, Y H:i" }}
+                  </p>
+                </div>
+                <span class="risk-pill px-3 py-1 rounded-full text-xs font-medium
+                  {% if result.risk_level == 'High' %}
+                    risk-pill-high
+                  {% elif result.risk_level == 'Medium' %}
+                    risk-pill-medium
+                  {% else %}
+                    risk-pill-low
+                  {% endif %}
+                ">
+                  {{ result.risk_level }}
+                </span>
+              </div>
+              <p class="mt-2 text-sm">
+                Score: {{ result.risk_score }} | Entropy: {{ result.entropy }}
+              </p>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-muted">No scans yet.</p>
+      {% endif %}
+    </div>
+
+    <div class="panel rounded-2xl p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-semibold">Recent YARA Hits</h2>
+      </div>
+
+      {% if yara_hits %}
+        <div class="space-y-3">
+          {% for result in yara_hits %}
+            <div class="panel-subtle rounded-xl p-4">
+              <p class="font-medium break-all">{{ result.scan_file.filename }}</p>
+              <p class="text-muted text-sm mt-1">
+                {{ result.scanned_at|date:"M d, Y H:i" }}
+              </p>
+              <p class="mt-2 text-sm break-words">
+                {{ result.yara_matches }}
+              </p>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-muted">No YARA hits recorded yet.</p>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

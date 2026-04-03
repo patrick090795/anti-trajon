@@ -1,0 +1,228 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Anti-Trojan Tool{% endblock %}</title>
+    <meta name="theme-color" content="#0B1220">
+
+    <link rel="icon" href="{% static 'scanner/favicon.svg' %}" type="image/svg+xml">
+    <link rel="shortcut icon" href="{% static 'scanner/favicon.svg' %}">
+    <link rel="stylesheet" href="{% static 'scanner/styles.css' %}">
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+
+    <style>
+        :root {
+            --color-midnight-core: #0B1220;
+            --color-deep-sentinel: #132238;
+            --color-forensic-cyan: #19C6D1;
+            --color-forensic-cyan-strong: #43D9E3;
+            --color-alert-amber: #F2A93B;
+            --color-threat-red: #E96A6A;
+            --color-clean-green: #37B26C;
+            --color-steel-slate: #7E8CA0;
+            --color-cold-fog: #C7D6E3;
+            --color-quarantine-teal: #224B5E;
+            --shadow-panel: 0 24px 60px rgba(1, 8, 20, 0.32);
+        }
+
+        body.app-shell {
+            background:
+                radial-gradient(circle at top left, rgba(25, 198, 209, 0.12), transparent 32%),
+                radial-gradient(circle at top right, rgba(217, 75, 75, 0.10), transparent 26%),
+                linear-gradient(180deg, #101a2c 0%, var(--color-midnight-core) 38%, #08101c 100%);
+            color: var(--color-cold-fog);
+        }
+
+        .app-nav {
+            background: rgba(11, 18, 32, 0.88);
+            border-bottom: 1px solid rgba(126, 140, 160, 0.24);
+            backdrop-filter: blur(18px);
+        }
+
+        .brand-title {
+            color: var(--color-forensic-cyan);
+        }
+
+        .text-muted {
+            color: var(--color-steel-slate);
+        }
+
+        .nav-link {
+            color: var(--color-cold-fog);
+            transition: color 180ms ease, opacity 180ms ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.is-active {
+            color: var(--color-forensic-cyan-strong);
+        }
+
+        .panel {
+            background: linear-gradient(180deg, rgba(19, 34, 56, 0.96), rgba(11, 18, 32, 0.96));
+            border: 1px solid rgba(126, 140, 160, 0.16);
+            box-shadow: var(--shadow-panel);
+        }
+
+        .panel-subtle {
+            background: rgba(19, 34, 56, 0.84);
+            border: 1px solid rgba(126, 140, 160, 0.12);
+        }
+
+        .panel-interactive {
+            background: rgba(19, 34, 56, 0.84);
+            border: 1px solid rgba(126, 140, 160, 0.16);
+            transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+        }
+
+        .panel-interactive:hover {
+            background: rgba(34, 75, 94, 0.88);
+            border-color: rgba(25, 198, 209, 0.34);
+            transform: translateY(-1px);
+        }
+
+        .panel-interactive:hover .text-muted {
+            color: var(--color-cold-fog);
+        }
+
+        .metric-high {
+            border-color: rgba(217, 75, 75, 0.28);
+        }
+
+        .metric-medium {
+            border-color: rgba(242, 169, 59, 0.28);
+        }
+
+        .metric-low {
+            border-color: rgba(55, 178, 108, 0.28);
+        }
+
+        .button-primary {
+            background: var(--color-forensic-cyan);
+            color: var(--color-midnight-core);
+            transition: background 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+            box-shadow: 0 12px 28px rgba(25, 198, 209, 0.24);
+        }
+
+        .button-primary:hover {
+            background: var(--color-forensic-cyan-strong);
+            transform: translateY(-1px);
+            box-shadow: 0 16px 30px rgba(25, 198, 209, 0.28);
+        }
+
+        .risk-pill {
+            border-width: 1px;
+        }
+
+        .risk-pill-high {
+            background: rgba(217, 75, 75, 0.16);
+            color: #f5b9b9;
+            border-color: rgba(217, 75, 75, 0.34);
+        }
+
+        .risk-pill-medium {
+            background: rgba(242, 169, 59, 0.16);
+            color: #f7d08d;
+            border-color: rgba(242, 169, 59, 0.34);
+        }
+
+        .risk-pill-low {
+            background: rgba(55, 178, 108, 0.16);
+            color: #9fe0b9;
+            border-color: rgba(55, 178, 108, 0.34);
+        }
+
+        .field-shell {
+            background: rgba(11, 18, 32, 0.9);
+            color: var(--color-cold-fog);
+            border-color: rgba(126, 140, 160, 0.24);
+        }
+
+        .field-shell::file-selector-button {
+            margin-right: 1rem;
+            border: 0;
+            border-radius: 0.75rem;
+            padding: 0.65rem 0.9rem;
+            background: rgba(34, 75, 94, 0.9);
+            color: var(--color-cold-fog);
+        }
+
+        .alert-error {
+            border: 1px solid rgba(217, 75, 75, 0.3);
+            background: rgba(217, 75, 75, 0.10);
+            color: #f5b9b9;
+        }
+
+        .htmx-indicator {
+            display: none;
+        }
+
+        .htmx-request .htmx-indicator {
+            display: block;
+        }
+
+        .htmx-request.htmx-indicator {
+            display: block;
+        }
+    </style>
+</head>
+
+<body class="app-shell min-h-screen flex flex-col">
+    <nav class="app-nav">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div>
+                <h1 class="brand-title text-xl font-bold">Anti-Trojan Tool</h1>
+                <p class="text-muted text-sm">Static file analysis platform</p>
+            </div>
+
+            <div class="flex gap-4 text-sm">
+                <a href="{% url 'scan_home' %}" class="nav-link transition {% if request.path == '/scanner/' %}is-active{% endif %}">Scanner</a>
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="nav-link transition {% if request.path == '/dashboard/' %}is-active{% endif %}">Dashboard</a>
+                    <a href="{% url 'scan_history' %}" class="nav-link {% if request.path == '/scanner/history/' %}is-active{% endif %}">History</a>
+                {% endif %}
+                {% if request.user.is_staff %}
+                    <a href="/admin/" class="nav-link transition">Admin</a>
+                {% endif %}
+                {% if request.user.is_authenticated %}
+                    <form method="post" action="{% url 'logout' %}" class="inline">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-link transition">Logout</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="nav-link transition {% if request.path == '/accounts/login/' %}is-active{% endif %}">Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-6 py-8 flex-1 w-full">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="border-t border-slate-800/70 bg-slate-950/40 backdrop-blur-sm">
+        <div class="max-w-6xl mx-auto px-6 py-5 flex flex-col items-center justify-center gap-3 text-center">
+            <div>
+                <p class="text-sm font-semibold" style="color: var(--color-cold-fog);">Anti-Trojan Tool</p>
+                <p class="text-muted text-xs mt-1">Static file analysis for fast malware triage and review.</p>
+            </div>
+
+            <div class="text-sm flex flex-wrap items-center justify-center gap-4">
+                <a href="{% url 'scan_home' %}" class="nav-link">Scanner</a>
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a>
+                    <a href="{% url 'scan_history' %}" class="nav-link">History</a>
+                {% endif %}
+                {% if request.user.is_staff %}
+                    <a href="/admin/" class="nav-link">Admin</a>
+                {% endif %}
+            </div>
+
+            <p class="text-muted text-xs">Prototype security console. Static analysis only.</p>
+        </div>
+    </footer>
+</body>
+
+</html>

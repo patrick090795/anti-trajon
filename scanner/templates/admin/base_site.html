@@ -1,0 +1,84 @@
+{% extends "admin/base.html" %}
+{% load i18n static %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Anti-Trojan Admin') }}{% endblock %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'admin/admin-theme.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <meta name="theme-color" content="#0B1220">
+    <link rel="icon" href="{% static 'scanner/favicon.svg' %}" type="image/svg+xml">
+    <link rel="shortcut icon" href="{% static 'scanner/favicon.svg' %}">
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} anti-trojan-admin{% endblock %}
+
+{% block header %}
+    <header id="header" class="app-admin-nav">
+        <div class="app-admin-shell">
+            <div id="branding">
+                <h1 id="site-name">
+                    <a href="{% url 'admin:index' %}">Anti-Trojan Tool</a>
+                </h1>
+                <p class="app-admin-subtitle">Static file analysis platform</p>
+            </div>
+
+            {% if has_permission %}
+                <div id="user-tools">
+                    <a href="{% url 'scan_home' %}">Scanner</a>
+                    <a href="{% url 'dashboard' %}">Dashboard</a>
+                    <a href="{% url 'scan_history' %}">History</a>
+                    {% if site_url %}
+                        <a href="{{ site_url }}">{% translate 'View site' %}</a>
+                    {% endif %}
+                    {% if user.has_usable_password %}
+                        <a href="{% url 'admin:password_change' %}">{% translate 'Change password' %}</a>
+                    {% endif %}
+                    <form id="logout-form" method="post" action="{% url 'admin:logout' %}">
+                        {% csrf_token %}
+                        <button type="submit">{% translate 'Log out' %}</button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    </header>
+{% endblock %}
+
+{% block nav-breadcrumbs %}
+    {% if not is_popup %}
+        <nav aria-label="{% translate 'Breadcrumbs' %}">
+            {% block breadcrumbs %}
+                <div class="breadcrumbs-shell">
+                    <div class="breadcrumbs">
+                        <a href="{% url 'admin:index' %}">{% translate 'Admin' %}</a>
+                        {% if title %} &rsaquo; {{ title }}{% endif %}
+                    </div>
+                </div>
+            {% endblock %}
+        </nav>
+    {% endif %}
+{% endblock %}
+
+{% block footer %}
+    <div class="app-admin-footer">
+        <div class="app-admin-footer-shell">
+            <div>
+                <p class="footer-title">Anti-Trojan Tool</p>
+                <p class="footer-subtitle">Static file analysis for fast malware triage and review.</p>
+            </div>
+
+            <div class="footer-links">
+                <a href="{% url 'scan_home' %}">Scanner</a>
+                <a href="{% url 'dashboard' %}">Dashboard</a>
+                <a href="{% url 'scan_history' %}">History</a>
+                <a href="{% url 'admin:index' %}">Admin</a>
+            </div>
+
+            <p class="footer-note">Prototype security console. Static analysis only.</p>
+        </div>
+    </div>
+{% endblock %}

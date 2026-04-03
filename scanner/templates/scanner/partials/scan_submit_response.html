@@ -1,0 +1,7 @@
+{% include "scanner/partials/upload_form.html" with oob=True %}
+{% include "scanner/partials/scan_history.html" with oob=True %}
+{% if scan_job and not result %}
+    {% include "scanner/partials/scan_job_status_card.html" %}
+{% else %}
+    {% include "scanner/partials/result_card.html" %}
+{% endif %}

@@ -1,0 +1,38 @@
+<div
+    class="panel rounded-2xl p-6 min-h-[320px] flex items-center justify-center"
+    {% if scan_job.status == 'queued' or scan_job.status == 'running' %}
+        hx-get="{% url 'scan_job_status' scan_job.public_id %}"
+        hx-trigger="load delay:500ms, every 1s"
+        hx-swap="outerHTML"
+    {% endif %}
+>
+    <div class="text-center max-w-md">
+        <div class="mx-auto mb-4 h-14 w-14 rounded-full border border-cyan-400/30 bg-cyan-400/10 flex items-center justify-center">
+            <div class="{% if scan_job.status == 'failed' %}text-red-300{% else %}brand-title animate-pulse{% endif %} text-xl font-bold">
+                {% if scan_job.status == 'failed' %}!{% else %}...{% endif %}
+            </div>
+        </div>
+        <h2 class="text-2xl font-semibold mb-2">
+            {% if scan_job.status == 'queued' %}
+                Scan queued
+            {% elif scan_job.status == 'running' %}
+                Scan running
+            {% else %}
+                Scan failed
+            {% endif %}
+        </h2>
+        <p class="text-muted">
+            {{ scan_job.scan_file.filename }}
+        </p>
+        {% if scan_job.status == 'queued' %}
+            <p class="text-muted mt-4">The file was accepted and is waiting for a background worker.</p>
+        {% elif scan_job.status == 'running' %}
+            <p class="text-muted mt-4">Static analysis is running in the background. This panel will refresh automatically.</p>
+        {% else %}
+            <div class="alert-error mt-4 rounded-xl px-4 py-3 text-sm text-left">
+                <p class="font-semibold mb-1">The scan job did not finish successfully.</p>
+                <p>{{ scan_job.error_message|default:"An unexpected background scan error occurred." }}</p>
+            </div>
+        {% endif %}
+    </div>
+</div>

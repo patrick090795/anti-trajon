@@ -1,0 +1,57 @@
+{% extends "scanner/base.html" %}
+
+{% block title %}Sign In{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto">
+    <div class="panel rounded-2xl p-8">
+        <h1 class="text-3xl font-bold">Sign In</h1>
+        <p class="text-muted mt-2">Access the dashboard, result history, and detailed scan views.</p>
+
+        <form method="post" class="space-y-4 mt-6">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="alert-error rounded-xl px-4 py-3 text-sm">
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div>
+                <label class="block text-sm font-medium mb-2" for="{{ form.username.id_for_label }}">Username</label>
+                <input
+                    class="field-shell block w-full rounded-xl border p-3 text-sm"
+                    id="{{ form.username.id_for_label }}"
+                    name="{{ form.username.html_name }}"
+                    type="text"
+                    value="{{ form.username.value|default:'' }}"
+                    autocomplete="username"
+                    required
+                >
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-2" for="{{ form.password.id_for_label }}">Password</label>
+                <input
+                    class="field-shell block w-full rounded-xl border p-3 text-sm"
+                    id="{{ form.password.id_for_label }}"
+                    name="{{ form.password.html_name }}"
+                    type="password"
+                    autocomplete="current-password"
+                    required
+                >
+            </div>
+
+            {% if next %}
+                <input type="hidden" name="next" value="{{ next }}">
+            {% endif %}
+
+            <button type="submit" class="button-primary w-full rounded-xl px-5 py-2.5 font-semibold">
+                Sign In
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

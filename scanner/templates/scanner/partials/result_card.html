@@ -1,0 +1,117 @@
+{% if scan_file and result %}
+<div class="panel rounded-2xl p-6">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-semibold">Scan Result</h2>
+        <span class="risk-pill px-3 py-1 rounded-full text-sm font-medium
+            {% if result.risk_level == 'High' %}
+                risk-pill-high
+            {% elif result.risk_level == 'Medium' %}
+                risk-pill-medium
+            {% else %}
+                risk-pill-low
+            {% endif %}
+        ">
+            {{ result.risk_level }}
+        </span>
+    </div>
+
+    <div class="grid sm:grid-cols-2 gap-4 mb-6">
+        <div class="panel-subtle rounded-xl p-4">
+            <p class="text-muted text-sm">Filename</p>
+            <p class="font-medium break-all">{{ scan_file.filename }}</p>
+        </div>
+        <div class="panel-subtle rounded-xl p-4">
+            <p class="text-muted text-sm">Risk Score</p>
+            <p class="font-medium">{{ result.risk_score }}</p>
+        </div>
+    </div>
+
+    <div class="grid sm:grid-cols-3 gap-4 mb-6">
+        <div class="panel-subtle rounded-xl p-4">
+            <p class="text-muted text-sm">Entropy</p>
+            <p class="font-medium">{{ result.entropy|floatformat:2 }}</p>
+        </div>
+        <div class="panel-subtle rounded-xl p-4">
+            <p class="text-muted text-sm">File Size</p>
+            <p class="font-medium">{{ result.file_size }} bytes</p>
+        </div>
+        <div class="panel-subtle rounded-xl p-4">
+            <p class="text-muted text-sm">Extension</p>
+            <p class="font-medium">{{ result.file_extension|default:"Unknown" }}</p>
+        </div>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="panel-subtle rounded-xl p-4">
+            <p class="text-muted text-sm">File Type</p>
+            <p class="font-medium">{{ result.file_type|default:"Unknown" }}</p>
+        </div>
+        <div class="panel-subtle rounded-xl p-4">
+            <p class="text-muted text-sm">Content Type</p>
+            <p class="font-medium break-words">{{ result.content_type|default:"Unknown" }}</p>
+        </div>
+        <div class="panel-subtle rounded-xl p-4">
+            <p class="text-muted text-sm">YARA Engine</p>
+            <p class="font-medium">{% if result.yara_available %}Available{% else %}Unavailable{% endif %}</p>
+        </div>
+        <div class="panel-subtle rounded-xl p-4">
+            <p class="text-muted text-sm">Scan Time</p>
+            <p class="font-medium">{{ result.scan_duration_ms }} ms</p>
+        </div>
+    </div>
+
+    <div class="panel-subtle rounded-xl p-4 mb-6">
+        <p class="text-muted text-sm mb-2">SHA-256</p>
+        <p class="font-mono text-sm break-all">{{ scan_file.sha256 }}</p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 gap-4 mb-6">
+        <div class="panel-subtle rounded-xl p-4">
+            <p class="text-muted text-sm mb-2">Suspicious Strings</p>
+            <p class="text-sm break-words">{{ result.suspicious_strings|default:"None" }}</p>
+        </div>
+        <div class="panel-subtle rounded-xl p-4">
+            <p class="text-muted text-sm mb-2">Suspicious APIs</p>
+            <p class="text-sm break-words">{{ result.suspicious_apis|default:"None" }}</p>
+        </div>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="panel-subtle rounded-xl p-4">
+            <p class="text-muted text-sm">String Hits</p>
+            <p class="font-medium">{{ result.suspicious_string_count }}</p>
+        </div>
+        <div class="panel-subtle rounded-xl p-4">
+            <p class="text-muted text-sm">API Hits</p>
+            <p class="font-medium">{{ result.suspicious_api_count }}</p>
+        </div>
+        <div class="panel-subtle rounded-xl p-4">
+            <p class="text-muted text-sm">YARA Hits</p>
+            <p class="font-medium">{{ result.yara_match_count }}</p>
+        </div>
+        <div class="panel-subtle rounded-xl p-4">
+            <p class="text-muted text-sm">Embedded URLs</p>
+            <p class="font-medium">{% if result.contains_embedded_urls %}Yes{% else %}No{% endif %}</p>
+        </div>
+    </div>
+
+    <div class="panel-subtle rounded-xl p-4 mb-6">
+        <p class="text-muted text-sm mb-2">YARA Matches</p>
+        <p class="text-sm break-words">{{ result.yara_matches|default:"None" }}</p>
+    </div>
+
+    <div class="panel-subtle rounded-xl p-4">
+        <p class="text-muted text-sm mb-2">Analysis Summary</p>
+        <pre class="whitespace-pre-wrap text-sm">{{ result.explanation }}</pre>
+    </div>
+</div>
+{% else %}
+<div class="panel rounded-2xl p-6 min-h-[320px] flex items-center justify-center">
+    <div class="text-center">
+        <h2 class="text-2xl font-semibold mb-2">Scan Result</h2>
+        <p class="text-muted">
+            Upload a file to see the analysis result here.
+        </p>
+    </div>
+</div>
+{% endif %}

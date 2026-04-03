@@ -1,0 +1,43 @@
+<div id="recent-scans" {% if oob %}hx-swap-oob="true"{% endif %} class="panel rounded-2xl p-6 mt-8">
+    <div class="flex items-center justify-between mb-4">
+        <h3 class="text-xl font-semibold">Recent Scans</h3>
+        <span class="text-muted text-sm">{{ recent_scans|length }} shown</span>
+    </div>
+
+    {% if recent_scans %}
+        <div class="space-y-3">
+            {% for item in recent_scans %}
+                <a href="{% url 'scan_result' item.scan_file.id %}"
+                   class="panel-interactive block rounded-xl p-4">
+                    <div class="flex items-center justify-between gap-4">
+                        <div class="min-w-0">
+                            <p class="font-medium truncate">{{ item.scan_file.filename }}</p>
+                            <p class="text-muted text-sm truncate">
+                                {{ item.scan_file.sha256|slice:":16" }}...
+                            </p>
+                        </div>
+
+                        <div class="text-right shrink-0">
+                            <span class="risk-pill px-3 py-1 rounded-full text-xs font-medium
+                                {% if item.risk_level == 'High' %}
+                                    risk-pill-high
+                                {% elif item.risk_level == 'Medium' %}
+                                    risk-pill-medium
+                                {% else %}
+                                    risk-pill-low
+                                {% endif %}
+                            ">
+                                {{ item.risk_level }}
+                            </span>
+                            <p class="text-muted text-xs mt-2">
+                                Score: {{ item.risk_score }}
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-muted">No scans yet.</p>
+    {% endif %}
+</div>

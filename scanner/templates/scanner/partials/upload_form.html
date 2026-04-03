@@ -1,0 +1,59 @@
+<div id="upload-panel" {% if oob %}hx-swap-oob="true"{% endif %} class="panel rounded-2xl p-6">
+    <h2 class="text-2xl font-semibold mb-2">Upload File</h2>
+    <p class="text-muted mb-6">
+        Upload a file for static anti-trojan analysis.
+    </p>
+
+    {% if form.non_field_errors %}
+        <div class="alert-error mb-4 rounded-xl px-4 py-3 text-sm">
+            {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form
+        method="post"
+        enctype="multipart/form-data"
+        class="space-y-4"
+        hx-post="{% url 'scan_home' %}"
+        hx-target="#scan-result"
+        hx-swap="innerHTML"
+        hx-indicator=".htmx-indicator"
+    >
+        {% csrf_token %}
+        <div>
+            <label class="block text-sm font-medium mb-2" for="{{ form.file.id_for_label }}">Select File</label>
+            {{ form.file }}
+            {% if form.file.help_text %}
+                <p class="text-muted mt-2 text-xs">{{ form.file.help_text }}</p>
+            {% endif %}
+            {% if form.file.errors %}
+                <div class="alert-error mt-3 rounded-xl px-4 py-3 text-sm">
+                    {% for error in form.file.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <button
+            type="submit"
+            class="button-primary font-semibold px-5 py-2.5 rounded-xl">
+            Scan File
+        </button>
+
+        <p class="htmx-indicator brand-title text-sm">Scanning file...</p>
+    </form>
+
+    <div class="text-muted mt-6 text-sm">
+        <p>This scanner currently checks:</p>
+        <ul class="mt-2 space-y-1">
+            <li>&bull; SHA-256 hash</li>
+            <li>&bull; File size and extension</li>
+            <li>&bull; Entropy analysis</li>
+            <li>&bull; Suspicious strings</li>
+            <li>&bull; Basic risk scoring</li>
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,95 @@
+{% extends "scanner/base.html" %}
+
+{% block title %}Scan History{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-8">
+    <div class="flex items-end justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-bold">Scan History</h1>
+            <p class="text-muted mt-2">
+                Review previous scans, risk levels, and detection signals.
+            </p>
+        </div>
+        <a href="{% url 'scan_home' %}"
+           class="button-primary inline-block font-semibold px-5 py-2.5 rounded-xl">
+            New Scan
+        </a>
+    </div>
+
+    {% if results %}
+        <div class="space-y-4">
+            {% for item in results %}
+                <a href="{% url 'scan_result' item.scan_file.id %}"
+                   class="panel-interactive block rounded-2xl p-6">
+                    <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-3 flex-wrap">
+                                <h2 class="text-lg font-semibold break-all">{{ item.scan_file.filename }}</h2>
+                                <span class="risk-pill px-3 py-1 rounded-full text-xs font-medium
+                                    {% if item.risk_level == 'High' %}
+                                        risk-pill-high
+                                    {% elif item.risk_level == 'Medium' %}
+                                        risk-pill-medium
+                                    {% else %}
+                                        risk-pill-low
+                                    {% endif %}
+                                ">
+                                    {{ item.risk_level }}
+                                </span>
+                            </div>
+                            <p class="text-muted text-sm mt-2 break-all">
+                                SHA-256: {{ item.scan_file.sha256 }}
+                            </p>
+                            <p class="text-muted text-sm mt-1">
+                                {{ item.scanned_at|date:"M d, Y H:i" }}
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 min-w-0 lg:min-w-[360px]">
+                            <div class="panel-subtle rounded-xl p-3">
+                                <p class="text-muted text-xs">Score</p>
+                                <p class="font-medium mt-1">{{ item.risk_score }}</p>
+                            </div>
+                            <div class="panel-subtle rounded-xl p-3">
+                                <p class="text-muted text-xs">Entropy</p>
+                                <p class="font-medium mt-1">{{ item.entropy|floatformat:2 }}</p>
+                            </div>
+                            <div class="panel-subtle rounded-xl p-3">
+                                <p class="text-muted text-xs">Size</p>
+                                <p class="font-medium mt-1">{{ item.file_size }}</p>
+                            </div>
+                            <div class="panel-subtle rounded-xl p-3">
+                                <p class="text-muted text-xs">Extension</p>
+                                <p class="font-medium mt-1">{{ item.file_extension|default:"Unknown" }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid lg:grid-cols-3 gap-3 mt-4">
+                        <div class="panel-subtle rounded-xl p-4">
+                            <p class="text-muted text-sm mb-2">Suspicious Strings</p>
+                            <p class="text-sm break-words">{{ item.suspicious_strings|default:"None" }}</p>
+                        </div>
+                        <div class="panel-subtle rounded-xl p-4">
+                            <p class="text-muted text-sm mb-2">Suspicious APIs</p>
+                            <p class="text-sm break-words">{{ item.suspicious_apis|default:"None" }}</p>
+                        </div>
+                        <div class="panel-subtle rounded-xl p-4">
+                            <p class="text-muted text-sm mb-2">YARA Matches</p>
+                            <p class="text-sm break-words">{{ item.yara_matches|default:"None" }}</p>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="panel rounded-2xl p-10 text-center">
+            <h2 class="text-2xl font-semibold">No scans recorded yet</h2>
+            <p class="text-muted mt-2">
+                Run your first file analysis to start building scan history.
+            </p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
