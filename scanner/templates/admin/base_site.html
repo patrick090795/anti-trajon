@@ -22,9 +22,9 @@
         <div class="app-admin-shell">
             <div id="branding">
                 <h1 id="site-name">
-                    <a href="{% url 'admin:index' %}">Anti-Trojan Tool</a>
+                    <a href="{% url 'admin:index' %}">{{ admin_brand_name|default:_('Anti-Trojan Tool') }}</a>
                 </h1>
-                <p class="app-admin-subtitle">Static file analysis platform</p>
+                <p class="app-admin-subtitle">{{ admin_subtitle|default:_('Static file analysis platform') }}</p>
             </div>
 
             {% if has_permission %}
@@ -67,8 +67,8 @@
     <div class="app-admin-footer">
         <div class="app-admin-footer-shell">
             <div>
-                <p class="footer-title">Anti-Trojan Tool</p>
-                <p class="footer-subtitle">Static file analysis for fast malware triage and review.</p>
+                <p class="footer-title">{{ admin_brand_name|default:_('Anti-Trojan Tool') }}</p>
+                <p class="footer-subtitle">{{ admin_subtitle|default:_('Static file analysis platform') }}</p>
             </div>
 
             <div class="footer-links">
@@ -78,7 +78,7 @@
                 <a href="{% url 'admin:index' %}">Admin</a>
             </div>
 
-            <p class="footer-note">Prototype security console. Static analysis only.</p>
+            <p class="footer-note">{{ admin_footer_note|default:_('Prototype security console. Static analysis only.') }}</p>
         </div>
     </div>
 {% endblock %}

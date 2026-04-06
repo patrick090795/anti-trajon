@@ -88,6 +88,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'core.context_processors.admin_branding',
             ],
         },
     },
@@ -149,6 +150,14 @@ LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/scanner/'
 LOGOUT_REDIRECT_URL = '/scanner/'
 SCAN_EAGER_JOBS = False
+
+# admin branding
+ADMIN_BRAND_NAME = os.getenv('ADMIN_BRAND_NAME', 'Anti-Trojan Tool')
+ADMIN_SITE_HEADER = os.getenv('ADMIN_SITE_HEADER', 'Anti-Trojan Administration')
+ADMIN_SITE_TITLE = os.getenv('ADMIN_SITE_TITLE', 'Anti-Trojan Admin')
+ADMIN_INDEX_TITLE = os.getenv('ADMIN_INDEX_TITLE', 'Security Console')
+ADMIN_SUBTITLE = os.getenv('ADMIN_SUBTITLE', 'Static file analysis platform')
+ADMIN_FOOTER_NOTE = os.getenv('ADMIN_FOOTER_NOTE', 'Prototype security console. Static analysis only.')
 
 # scanner upload safeguards
 MAX_SCAN_UPLOAD_SIZE = 10 * 1024 * 1024
