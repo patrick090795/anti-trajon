@@ -150,6 +150,9 @@ LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/scanner/'
 LOGOUT_REDIRECT_URL = '/scanner/'
 SCAN_EAGER_JOBS = False
+SCAN_WORKER_POLL_INTERVAL = float(os.getenv('SCAN_WORKER_POLL_INTERVAL', '2'))
+SCAN_WORKER_BATCH_SIZE = int(os.getenv('SCAN_WORKER_BATCH_SIZE', '10'))
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # admin branding
 ADMIN_BRAND_NAME = os.getenv('ADMIN_BRAND_NAME', 'Anti-Trojan Tool')

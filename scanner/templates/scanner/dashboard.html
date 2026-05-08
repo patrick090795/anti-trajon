@@ -99,5 +99,45 @@
     </div>
   </div>
 
+  <div class="grid lg:grid-cols-2 gap-6">
+    <div class="panel rounded-2xl p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-semibold">Top File Extensions</h2>
+      </div>
+
+      {% if top_extensions %}
+        <div class="space-y-3">
+          {% for extension, count in top_extensions %}
+            <div class="panel-subtle rounded-xl p-4 flex items-center justify-between gap-4">
+              <p class="font-medium">{{ extension }}</p>
+              <p class="text-muted text-sm">{{ count }} scan{{ count|pluralize }}</p>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-muted">No extension data recorded yet.</p>
+      {% endif %}
+    </div>
+
+    <div class="panel rounded-2xl p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-semibold">Common Suspicious Indicators</h2>
+      </div>
+
+      {% if common_indicators %}
+        <div class="space-y-3">
+          {% for indicator, count in common_indicators %}
+            <div class="panel-subtle rounded-xl p-4 flex items-center justify-between gap-4">
+              <p class="font-medium break-all">{{ indicator }}</p>
+              <p class="text-muted text-sm">{{ count }} hit{{ count|pluralize }}</p>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-muted">No suspicious indicators have been recorded yet.</p>
+      {% endif %}
+    </div>
+  </div>
+
 </div>
 {% endblock %}

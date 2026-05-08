@@ -1,5 +1,6 @@
 import uuid
 
+from django.conf import settings
 from django.db import models
 
 
@@ -7,7 +8,14 @@ class ScanFile(models.Model):
     file = models.FileField(upload_to='uploads/')
     filename = models.CharField(max_length=255)
     content_type = models.CharField(max_length=100, blank=True)
-    sha256 = models.CharField(max_length=64, blank=True)
+    sha256 = models.CharField(max_length=64, blank=True, db_index=True)
+    uploaded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="submitted_scan_files",
+    )
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -36,6 +44,14 @@ class ScanJob(models.Model):
 
 class ScanResult(models.Model):
     scan_file = models.OneToOneField(ScanFile, on_delete=models.CASCADE)
+    source_result = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="reused_by",
+    )
+    reused_existing_analysis = models.BooleanField(default=False)
     risk_score = models.FloatField(default=0.0)
     risk_level = models.CharField(max_length=20, default='Unknown')
     entropy = models.FloatField(default=0.0)

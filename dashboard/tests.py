@@ -15,11 +15,13 @@ class DashboardViewTests(TestCase):
             file="uploads/clean.bin",
             filename="clean.bin",
             sha256="b" * 64,
+            uploaded_by=self.user,
         )
         hit_file = ScanFile.objects.create(
             file="uploads/hit.bin",
             filename="hit.bin",
             sha256="c" * 64,
+            uploaded_by=self.user,
         )
 
         ScanResult.objects.create(
